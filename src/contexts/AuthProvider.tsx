@@ -1,6 +1,6 @@
 import { createContext, useState } from 'react'
 // import { TUser } from '../Types/types'
-import { TUser } from 'src/Types/types'
+import { TUser } from 'types/types'
 
 interface AuthProviderProps {
   children: React.ReactNode
