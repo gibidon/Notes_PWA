@@ -6,7 +6,7 @@ interface AuthProviderProps {
   children: React.ReactNode
 }
 
-interface IAuthContext {
+export interface IAuthContext {
   user: TUser | null
   signin: (newUser: TUser, callback: Function) => void
   signout: (callback: Function) => void
