@@ -1,29 +1,31 @@
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogTitle,
-  Typography,
-} from '@mui/material'
-import { NoteForm, SearchBox } from 'components'
+import { useMemo, useState } from 'react'
 import { useNotes } from 'hooks/useNotes'
-import { useState } from 'react'
-import { createNewNote } from 'utils/createNewNote'
+import { Box, Button, Typography } from '@mui/material'
+import { Modal, NoteForm, SearchBox } from 'components'
 
 export const Workspace = () => {
-  const [isAdding, setIsAdding] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
   const [openModal, setOpenModal] = useState(false)
   const [searchPhrase, setSearchPhrase] = useState('')
 
-  let { notes, activeNoteId, deleteNote, setActiveNoteId } = useNotes()
-
-  if (searchPhrase !== '') {
-    notes = notes.filter(note => note.body.includes(searchPhrase))
-  }
-
+  let {
+    notes,
+    activeNoteId,
+    deleteNote,
+    setActiveNoteId,
+    isEditing,
+    setIsEditing,
+    isAdding,
+    setIsAdding,
+  } = useNotes()
   const activeNote = notes.find(note => note.id === activeNoteId)
+
+  const filteredNotes = useMemo(() => {
+    if (searchPhrase !== '') {
+      return notes.filter(note => note.body.includes(searchPhrase))
+    }
+
+    return notes
+  }, [searchPhrase])
 
   const handleCloseModal = () => {
     setOpenModal(false)
@@ -37,86 +39,70 @@ export const Workspace = () => {
     }
   }
 
-  if (isAdding) {
-    return (
-      <Box>
-        <Typography>Create new note</Typography>
-        <NoteForm
-          // setIsEditing={setIsEditing}
-          note={createNewNote()}
-          setIsAdding={setIsAdding}
-        />
-      </Box>
-    )
-  }
+  if (isEditing) return <NoteForm note={activeNote} />
+  if (isAdding) return <NoteForm />
 
   return (
     <Box
       component="main"
       sx={{ flexGrow: 1, bgcolor: 'background.default', p: 2 }}
     >
-      {!isEditing && !isAdding && (
-        <SearchBox setSearchPhrase={setSearchPhrase} />
-      )}
-      {searchPhrase !== '' && (
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          {notes.map(note => (
-            <Box>
+      <SearchBox setSearchPhrase={setSearchPhrase} />
+
+      {searchPhrase !== '' ? (
+        <Box>
+          {filteredNotes.map(note => (
+            <Box
+              sx={{
+                padding: '0.6rem 0.3rem',
+                '&:hover': {
+                  borderColor: 'rgba(255,240,10,0.8)',
+                  backgroundColor: 'lightgrey',
+                },
+              }}
+              onClick={() => {
+                setSearchPhrase('')
+                setActiveNoteId(note.id)
+              }}
+            >
               <Typography fontSize={36} fontWeight={700}>
-                {note.id}
+                {note.title}
               </Typography>
-              <Typography>{note.title}</Typography>
               <Typography>{note.body}</Typography>
             </Box>
           ))}
         </Box>
-      )}
-      {isEditing && activeNote ? (
-        <NoteForm note={activeNote} setIsEditing={setIsEditing} />
       ) : (
-        <>
+        <Box>
           <Typography paragraph fontSize={26}>
             {activeNote?.title}
           </Typography>
+
           <Typography paragraph>{activeNote?.body}</Typography>
 
-          {searchPhrase === '' && (
-            <Box sx={{ display: 'flex', gap: '1rem' }}>
-              <Button onClick={() => setOpenModal(true)} variant="outlined">
-                Delete note
-              </Button>
-              <Button onClick={() => setIsEditing(true)} variant="outlined">
-                Edit note
-              </Button>
-              <Button
-                onClick={() => {
-                  setIsAdding(true)
-                }}
-                variant="outlined"
-              >
-                Add note
-              </Button>
-            </Box>
-          )}
+          <Box sx={{ display: 'flex', gap: '1rem' }}>
+            <Button onClick={() => setOpenModal(true)} variant="outlined">
+              Delete note
+            </Button>
+            <Button onClick={() => setIsEditing(true)} variant="outlined">
+              Edit note
+            </Button>
+            <Button
+              onClick={() => {
+                setIsAdding(true)
+              }}
+              variant="outlined"
+            >
+              Add note
+            </Button>
+          </Box>
 
-          <Dialog
-            open={openModal}
-            onClose={handleCloseModal}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-          >
-            <DialogTitle id="alert-dialog-title">Delete this note?</DialogTitle>
-
-            <DialogActions>
-              <Button onClick={handleCloseModal} variant="outlined">
-                Cancel
-              </Button>
-              <Button onClick={handleDeleteNote} autoFocus variant="outlined">
-                Confirm
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </>
+          <Modal
+            openModal={openModal}
+            handleCloseModal={handleCloseModal}
+            handleDeleteNote={handleDeleteNote}
+          />
+        </Box>
       )}
     </Box>
   )

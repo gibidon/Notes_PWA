@@ -1,39 +1,30 @@
 import { Box, Button, FormLabel, TextField } from '@mui/material'
-import { ChangeEvent, FormEvent, useState, useEffect } from 'react'
+import { ChangeEvent, useState, useEffect } from 'react'
 import { useNotes } from 'hooks/useNotes'
 import { INote } from 'types/types'
+import { createNewNote } from 'utils/createNewNote'
 
 interface NoteFormProps {
-  note: INote
-  setIsEditing?: (isEditing: boolean) => void
-  setIsAdding?: (isAdding: boolean) => void
+  note?: INote
 }
 
-export const NoteForm = ({
-  note,
-  setIsEditing,
-  setIsAdding,
-}: NoteFormProps) => {
-  const [formData, setFormData] = useState<INote>(note)
-  const { addNote, editNote } = useNotes()
+export const NoteForm = ({ note }: NoteFormProps) => {
+  console.log('note incoming to form:', note)
+  const { addNote, editNote, isEditing, setIsEditing, isAdding, setIsAdding } =
+    useNotes()
+  const [formData, setFormData] = useState<INote>(note ?? createNewNote())
 
-  // const handleFormSubmit = (e: FormEvent) => {
-  //   e.preventDefault()
-  //   console.log('form sending..')
-  //   editNote(note.id, formData)
-  //   setIsEditing(false)
-  // }
+  console.log('note in fact', formData)
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData(prevState => ({
       ...prevState,
       [e.target.name]: e.target.value,
     }))
-    // setIsEditing(false)
   }
 
   useEffect(() => {
-    editNote(note.id, formData)
+    editNote(formData.id, formData)
   }, [formData])
 
   return (
@@ -42,7 +33,7 @@ export const NoteForm = ({
         <FormLabel>Title</FormLabel>
         <TextField
           sx={{ p: 2 }}
-          defaultValue={note?.title}
+          defaultValue={formData?.title}
           name="title"
           onChange={handleInput}
         />
@@ -50,31 +41,23 @@ export const NoteForm = ({
       <Box>
         <FormLabel>Content:</FormLabel>
         <TextField
-          defaultValue={note?.body}
+          defaultValue={formData?.body}
           name="body"
           onChange={handleInput}
         />
       </Box>
-      {/* <Button type="submit" variant="outlined">
-          Save
-        </Button> */}
-      {/* </form> */}
-      {/* <Box>
-        <Button onClick={() => setIsEditing(false)}>Cancel edit</Button>
-      </Box> */}
 
-      {setIsEditing && (
+      {isEditing && (
         <Button
           onClick={() => {
             setIsEditing(false)
-            // setIsAdding(false)
           }}
         >
           Done
         </Button>
       )}
 
-      {setIsAdding && (
+      {isAdding && (
         <Button
           onClick={() => {
             addNote(formData)

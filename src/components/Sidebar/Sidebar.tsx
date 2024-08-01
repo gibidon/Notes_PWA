@@ -11,8 +11,9 @@ import { useNotes } from 'hooks/useNotes'
 export const drawerWidth = 240
 
 export function Sidebar() {
-  const { notes, activeNoteId, setActiveNoteId } = useNotes()
-  // const activeNote = notes.find(note => note.id === activeNoteId)
+  console.log('sidebar render')
+  const { notes, activeNoteId, setActiveNoteId, setIsAdding, setIsEditing } =
+    useNotes()
 
   console.log('notes in sidebar', notes)
 
@@ -37,7 +38,13 @@ export function Sidebar() {
         <List>
           {notes.map(note => (
             <ListItemButton key={note.id} selected={note.id === activeNoteId}>
-              <ListItemText onClick={() => setActiveNoteId(note.id)}>
+              <ListItemText
+                onClick={() => {
+                  setActiveNoteId(note.id)
+                  setIsAdding(false)
+                  setIsEditing(false)
+                }}
+              >
                 {note.title}
               </ListItemText>
             </ListItemButton>

@@ -12,6 +12,10 @@ export interface INotesContext {
   addNote: (note: INote) => void
   deleteNote: (id: number) => void
   editNote: (id: number, note: INote) => void
+  isAdding: boolean
+  setIsAdding: (isAdding: boolean) => void
+  isEditing: boolean
+  setIsEditing: (isEditing: boolean) => void
 }
 
 const initialNotes: Array<INote> = [
@@ -70,6 +74,10 @@ const initialNotesContext: INotesContext = {
   addNote: () => {},
   deleteNote: () => {},
   editNote: () => {},
+  isAdding: false,
+  setIsAdding: () => {},
+  isEditing: false,
+  setIsEditing: () => {},
 }
 
 export const NotesContext = createContext<INotesContext>(initialNotesContext)
@@ -77,14 +85,13 @@ export const NotesContext = createContext<INotesContext>(initialNotesContext)
 export const NotesProvider = ({ children }: NotesProviderProps) => {
   const [notes, setNotes] = useState<Array<INote>>(initialNotes)
   const [activeNoteId, setActiveNoteId] = useState(0)
-
-  console.log('activeNoteId: ', activeNoteId)
+  const [isAdding, setIsAdding] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
 
   const addNote = (note: INote) => {
     setNotes(prevState => [...prevState, note])
   }
   const editNote = (noteId: number, newNote: INote) => {
-    console.log('final editing', noteId, newNote)
     setNotes(notes.map(note => (note.id === noteId ? newNote : note)))
   }
 
@@ -99,6 +106,10 @@ export const NotesProvider = ({ children }: NotesProviderProps) => {
     deleteNote,
     activeNoteId,
     setActiveNoteId,
+    isEditing,
+    setIsEditing,
+    isAdding,
+    setIsAdding,
   }
 
   return (
