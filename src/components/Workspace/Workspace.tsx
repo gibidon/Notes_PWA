@@ -55,9 +55,11 @@ export const Workspace = () => {
             <Box
               sx={{
                 padding: '0.6rem 0.3rem',
+                cursor: 'pointer',
                 '&:hover': {
                   borderColor: 'rgba(255,240,10,0.8)',
                   backgroundColor: 'lightgrey',
+                  // cursor: 'pointer',
                 },
               }}
               onClick={() => {

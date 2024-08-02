@@ -1,4 +1,4 @@
-import { Box, Drawer } from '@mui/material'
+import { Box } from '@mui/material'
 import { Sidebar, Workspace } from 'components/index'
 
 export const Main = () => {
