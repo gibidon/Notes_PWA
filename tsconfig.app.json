@@ -24,11 +24,15 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": "src",
     "paths": {
-      "components/*": ["components/*"],
-      "hooks/*": ["hooks/*"],
-      "types/*": ["types/*"],
       "assets/*": ["assets/*"],
-      "contexts/*": ["contexts/*"]
+      "components/*": ["components/*"],
+      "contexts/*": ["contexts/*"],
+      "hooks/*": ["hooks/*"],
+      "layouts/*": ["layouts/*"],
+      "types/*": ["types/*"],
+      "pages/*": ["pages/*"],
+      "utils/*": ["utils/*"],
+      "constants/*": ["constants/*"]
     }
   },
   "include": ["src"]
